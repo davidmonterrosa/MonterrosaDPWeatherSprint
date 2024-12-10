@@ -10,12 +10,12 @@
 <body>
 
     <header class="header-grid">
-        <div class="justify-content-center">
-            <input id="searchBar" class="header-area-text" type="text" placeholder="Location">
+        <div class="d-flex justify-content-center bg-solid-gray">
+            <input id="searchBar" class="header-area-text bg-solid-gray border border-0" type="text" placeholder="Location">
             <img id="searchIcon" src="./assets/images/magnifyingGlass.svg" alt="Magnifying glass icon">
         </div>
         <div>
-            <button id="favoritesBtn" class="favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList"> Favorites</button>
+            <button id="favoritesBtn" class="header-area-text favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList"> Favorites</button>
             <div class="offcanvas offcanvas-start" tabindex="-1" id="favoritesList" aria-labelledby="offcanvasExampleLabel">
                 <div class="offcanvas-header">
                   <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
@@ -53,31 +53,31 @@
             <img id="favoriteIcon" src="./assets/images/favoriteIcon.svg" alt="Favorite icon">
         </section>
 
-        <div class="forecast-cards bg-translucent-gray">
+        <div class="forecast-cards bg-translucent-gray d-flex flex-column align-items-center">
             <h3>Today</h3>
             <img id="todayWeatherIcon" src="" alt="Small weather icon">
             <p id="todayMaxMinTemperature">??° / ??°</p>
         </div>
 
-        <div class="forecast-cards bg-translucent-gray">
+        <div class="forecast-cards bg-translucent-gray d-flex flex-column align-items-center">
             <h3 id="day2">Day</h3>
             <img id="day2WeatherIcon" src="" alt="Small weather icon">
             <p id="day2MaxMinTemperature">??° / ??°</p>
         </div>
 
-        <div class="forecast-cards bg-translucent-gray">
+        <div class="forecast-cards bg-translucent-gray d-flex flex-column align-items-center">
             <h3 id="day3">Day</h3>
             <img id="day3WeatherIcon" src="" alt="Small weather icon">
             <p id="day3MaxMinTemperature">??° / ??°</p>
         </div>
 
-        <div class="forecast-cards bg-translucent-gray">
+        <div class="forecast-cards bg-translucent-gray d-flex flex-column align-items-center">
             <h3 id="day4">Day</h3>
             <img id="day4WeatherIcon" src="" alt="Small weather icon">
             <p id="day4MaxMinTemperature">??° / ??°</p>
         </div>
 
-        <div class="forecast-cards bg-translucent-gray">
+        <div class="forecast-cards bg-translucent-gray d-flex flex-column align-items-center">
             <h3 id="day5">Day</h3>
             <img id="day5WeatherIcon" src="" alt="Small weather icon">
             <p id="day5MaxMinTemperature">??° / ??°</p>

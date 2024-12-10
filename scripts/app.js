@@ -33,17 +33,41 @@ let day5WeatherIcon = document.getElementById("day5WeatherIcon");
 let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
 
+function getMaxTemp(data) {
+    let maxTemp = -150;
+    let maxIndex = 0;
+    for(let i = 0; i < 40; i++) {
+        if(data.list[i].temp_max > maxTemp) {
+            maxTemp = data.list[i].temp_max;
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
 
+function getMinTemp(data) {
+    let minTemp = 150;
+    let minIndex = 0;
+    for(let i = 0; i < 8; i++) {
+        if(data.list[i].temp_min < minTemp) {
+            minTemp = data.list[i].temp_min;
+            minIndex = i;
+        }
+    }
+    return minIndex;
+}
 
 
 
 async function getWeatherData() {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}`);
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=stockton,us&appid=${APIKEY}&units=imperial`)
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log(data);
 
     currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
-    console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
+    // console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
     
     currentTemperature.innerText = `${data.main.temp}°`;
     console.log(data.main.temp);
@@ -54,16 +78,17 @@ async function getWeatherData() {
     currentWeatherDescription.innerText = data.weather[0].description;
     console.log(data.weather[0].description);
 
-    currentMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°`
 
-    
 }
 
 async function getFiveDayForecast() {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}`);
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log(data);
-
+    
+    // getMinTemp(`This is the 5 day forecast: ${data}`);
+    // getMaxTemp(data);
+    // currentMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°` 
 
 }
 getFiveDayForecast();
