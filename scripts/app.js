@@ -38,7 +38,7 @@ let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
 
 async function getWeatherData() {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}`);
     const data = await response.json();
     console.log(data);
 
@@ -60,9 +60,11 @@ async function getWeatherData() {
 }
 
 async function getFiveDayForecast() {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}`);
     const data = await response.json();
     console.log(data);
+
+
 }
 getFiveDayForecast();
 getWeatherData();
