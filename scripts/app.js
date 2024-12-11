@@ -4,7 +4,7 @@ import { APIKEY } from "./environment.js";
 let nightModeToggle = document.getElementById("nightModeToggle");
 let searchBar = document.getElementById("searchBar");
 let searchIcon = document.getElementById("searchIcon");
-let favoritesBtn = document.getElementById("favoritesBtn");
+let favoritesMenuBtn = document.getElementById("favoritesMenuBtn");
 
 let currentWeatherIcon = document.getElementById("currentWeatherIcon");
 let currentTemperature = document.getElementById("currentTemperature");
@@ -12,7 +12,7 @@ let city = document.getElementById("city");
 let date = document.getElementById("date");
 let currentWeatherDescription = document.getElementById("currentWeatherDescription");
 let currentMaxMinTemperature = document.getElementById("currentMaxMinTemperature");
-let favoriteIcon = document.getElementById("favoriteIcon");
+let addFavoriteIcon = document.getElementById("addFavoriteIcon");
 
 let todayWeatherIcon = document.getElementById("todayWeatherIcon");
 let todayMaxMinTemperature = document.getElementById("todayMaxMinTemperature");
@@ -35,6 +35,8 @@ let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
 let testBtn = document.getElementById("testBtn");
 
+let apiSearchString = "";
+
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
 const today = new Date();
 
@@ -43,6 +45,8 @@ function nightModePastSunset(data) {
     console.log(data.sys.sunset);
     if(data.dt > data.sys.sunset) {
         document.body.style.backgroundImage = "url(../assets/images/nightbackgrond.jpg)";
+    } else {
+        document.body.style.backgroundImage = "url(../assets/images/weatherbackground.jpg)"
     }
 }
 
@@ -59,7 +63,6 @@ function getMaxMinTemp(data, startIndex, endIndex) {
             minTemp = Math.round(data.list[i].main.temp_min);
         }
     }
-
     return `${maxTemp}° / ${minTemp}°`;
 }
 
@@ -82,13 +85,32 @@ function getForcastWeatherIcon(data, startIndex, endIndex) {
     return `https://openweathermap.org/img/wn/${topOfIconHierarchy}@2x.png`
 }
 
+addFavoriteIcon.addEventListener("click", () => {
 
-async function getWeatherData() {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=stockton,us&appid=${APIKEY}&units=imperial`)
+    addFavoriteIcon.style
+    // saveToLocalStorage(locationInput.toLowerCase())
+});
+
+searchBar.addEventListener("keydown", function(event) {
+    if(event.key === 'Enter') {
+        let locationInput = searchBar.value;
+        apiSearchString = locationInput.replaceAll(/\s/g, "");
+        console.log(apiSearchString.toLowerCase());
+        apiSearchString.toLowerCase();
+    }
+});
+
+searchIcon.addEventListener("click", () => {
+    apiSearchString = searchBar.value.replaceAll(/\s/g, "").toLowerCase();
+    console.log(`This console log was done via the search icon: ${apiSearchString}`);
+})
+
+async function getWeatherData(apiSearchString) {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}&units=imperial`);
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.3387}&lon=${-121.8853}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
-    console.log(data.dt_txt);
+    console.log(data);
     
     nightModePastSunset(data);
     currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
@@ -103,13 +125,11 @@ async function getWeatherData() {
     date.innerText = tmpDate.slice(0, 10);
     
     currentWeatherDescription.innerText = data.weather[0].description;
-    console.log(data.weather[0].description);
-    
-    
+    console.log(data.weather[0].description);  
 }
 
-async function getFiveDayForecast() {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}&units=imperial`);
+async function getFiveDayForecast(apiSearchString) {
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${apiSearchString}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log("below is forcast data");
     console.log(data)
@@ -146,6 +166,6 @@ async function getFiveDayForecast() {
 }
 
 testBtn.addEventListener("click", () => {
-    getFiveDayForecast();
-    getWeatherData();
+    getFiveDayForecast(apiSearchString);
+    getWeatherData(apiSearchString);
 });
