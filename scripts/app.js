@@ -1,6 +1,7 @@
 import { APIKEY } from "./environment.js";
 
 // Ids Section
+let nightModeToggle = document.getElementById("nightModeToggle");
 let searchBar = document.getElementById("searchBar");
 let searchIcon = document.getElementById("searchIcon");
 let favoritesBtn = document.getElementById("favoritesBtn");
@@ -34,8 +35,16 @@ let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
 let testBtn = document.getElementById("testBtn");
 
-let dayNightMode = "day";
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
+const today = new Date();
+
+function nightModePastSunset(data) {
+    console.log(data.dt)
+    console.log(data.sys.sunset);
+    if(data.dt > data.sys.sunset) {
+        document.body.style.backgroundImage = "url(../assets/images/nightbackgrond.jpg)";
+    }
+}
 
 
 function getMaxMinTemp(data, startIndex, endIndex) {
@@ -43,13 +52,14 @@ function getMaxMinTemp(data, startIndex, endIndex) {
     let minTemp = 150;
     for(let i = startIndex; i < endIndex; i++) {
         if(data.list[i].main.temp_max > maxTemp) {
-            maxTemp = data.list[i].main.temp_max;
+            maxTemp = Math.round(data.list[i].main.temp_max);
         }
 
         if(data.list[i].main.temp_min < minTemp) {
-            minTemp = data.list[i].main.temp_min;
+            minTemp = Math.round(data.list[i].main.temp_min);
         }
     }
+
     return `${maxTemp}° / ${minTemp}°`;
 }
 
@@ -69,16 +79,9 @@ function getForcastWeatherIcon(data, startIndex, endIndex) {
             topOfIconHierarchy = iconArray[j];
         }
     }
-    // if(dayNightMode == "day") { 
-        
-    // }
-    // if(dayNightMode == "night") {
-    //     data.list[i].weather[0].icon
-    // }
     return `https://openweathermap.org/img/wn/${topOfIconHierarchy}@2x.png`
 }
 
-const today = new Date();
 
 async function getWeatherData() {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=stockton,us&appid=${APIKEY}&units=imperial`)
@@ -87,10 +90,11 @@ async function getWeatherData() {
     const data = await response.json();
     console.log(data.dt_txt);
     
+    nightModePastSunset(data);
     currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
     // console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
     
-    currentTemperature.innerText = `${data.main.temp}°`;
+    currentTemperature.innerText = `${Math.round(data.main.temp)}°`;
     console.log(data.main.temp);
     
     city.innerText = data.name;
