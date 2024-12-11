@@ -93,17 +93,43 @@ addFavoriteIcon.addEventListener("click", () => {
 
 searchBar.addEventListener("keydown", function(event) {
     if(event.key === 'Enter') {
-        let locationInput = searchBar.value;
-        apiSearchString = locationInput.replaceAll(/\s/g, "");
-        console.log(apiSearchString.toLowerCase());
-        apiSearchString.toLowerCase();
+        let tempString = "";
+        let locationInput = searchBar.value.toLowerCase().trim();
+        for(let i = 0; i < locationInput.length; i++) {
+            if(locationInput.charAt(i) == " "){
+                tempString += "+";
+            } else if (locationInput.charAt(i) == ",") {
+                apiSearchString += `${tempString},`
+                tempString = "";
+                i++;
+            } else {
+                tempString += locationInput.charAt(i);
+            }
+        }
+        apiSearchString += tempString;
+        // console.log(apiSearchString.replaceAll(/\s/g, "").toLowerCase());
+        console.log(apiSearchString);
+        // apiSearchString.toLowerCase();
     }
 });
 
 searchIcon.addEventListener("click", () => {
-    apiSearchString = searchBar.value.replaceAll(/\s/g, "").toLowerCase();
+    let tempString = "";
+    let locationInput = searchBar.value.toLowerCase().trim();
+    for(let i = 0; i < locationInput.length; i++) {
+        if(locationInput.charAt(i) == " "){
+            tempString += "+";
+        } else if (locationInput.charAt(i) == ",") {
+            apiSearchString += `${tempString},`
+            tempString = "";
+            i++;
+        } else {
+            tempString += locationInput.charAt(i);
+        }
+    }
+    apiSearchString += tempString;
     console.log(`This console log was done via the search icon: ${apiSearchString}`);
-})
+});
 
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
