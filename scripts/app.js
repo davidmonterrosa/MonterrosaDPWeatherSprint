@@ -32,11 +32,12 @@ let day5 = document.getElementById("day5");
 let day5WeatherIcon = document.getElementById("day5WeatherIcon");
 let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
+let testBtn = document.getElementById("testBtn");
 
 function getMaxTemp(data) {
     let maxTemp = -150;
     let maxIndex = 0;
-    for(let i = 0; i < 40; i++) {
+    for(let i = 0; i < 8; i++) {
         if(data.list[i].temp_max > maxTemp) {
             maxTemp = data.list[i].temp_max;
             maxIndex = i;
@@ -60,7 +61,7 @@ function getMinTemp(data) {
 
 
 async function getWeatherData() {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=stockton,us&appid=${APIKEY}&units=imperial`)
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=stockton,us&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.9577}&lon=${-121.2908}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
@@ -82,8 +83,9 @@ async function getWeatherData() {
 }
 
 async function getFiveDayForecast() {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}&units=imperial`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${37.9577}&lon=${-121.290}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
+    console.log("below is forcast data");
     console.log(data);
     
     // getMinTemp(`This is the 5 day forecast: ${data}`);
@@ -91,5 +93,8 @@ async function getFiveDayForecast() {
     // currentMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°` 
 
 }
-getFiveDayForecast();
-getWeatherData();
+
+testBtn.addEventListener("click", () => {
+    getFiveDayForecast();
+    getWeatherData();
+});

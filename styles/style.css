@@ -11,6 +11,8 @@ body {
     background-image: url(../assets/images/weatherbackground.jpg);
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     padding: 2.875rem 3.063rem;
 }
 
