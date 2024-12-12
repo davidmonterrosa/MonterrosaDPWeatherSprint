@@ -40,6 +40,8 @@ let apiSearchString = "";
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
 const today = new Date();
 
+console.log(today.toLocaleDateString());
+
 function nightModePastSunset(data) {
     console.log(data.dt)
     console.log(data.sys.sunset);
@@ -86,9 +88,15 @@ function getForcastWeatherIcon(data, startIndex, endIndex) {
 }
 
 addFavoriteIcon.addEventListener("click", () => {
-
-    addFavoriteIcon.style
-    // saveToLocalStorage(locationInput.toLowerCase())
+    console.log(addFavoriteIcon.src.includes("favoriteIcon.svg"));
+    // addFavoriteIcon.
+    if(addFavoriteIcon.src.includes("favoriteIcon.svg")) {
+        addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg"
+    } else {
+        addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
+    }
+    console.log(`${city.innerText}`);
+    // saveToLocalStorage(`${city.innerText}`)
 });
 
 searchBar.addEventListener("keydown", function(event) {
@@ -107,9 +115,7 @@ searchBar.addEventListener("keydown", function(event) {
             }
         }
         apiSearchString += tempString;
-        // console.log(apiSearchString.replaceAll(/\s/g, "").toLowerCase());
         console.log(apiSearchString);
-        // apiSearchString.toLowerCase();
     }
 });
 
@@ -146,44 +152,47 @@ async function getWeatherData(apiSearchString) {
     console.log(data.main.temp);
     
     city.innerText = data.name;
-    let tmpDate = today.toLocaleString();
-    console.log(tmpDate);
-    date.innerText = tmpDate.slice(0, 10);
+    console.log(today.toLocaleDateString());
+    date.innerText = today.toLocaleDateString();
     
     currentWeatherDescription.innerText = data.weather[0].description;
     console.log(data.weather[0].description);  
+
+    currentMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
+
+    todayWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+    todayMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°`;
 }
 
 async function getFiveDayForecast(apiSearchString) {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${apiSearchString}&appid=${APIKEY}&units=imperial`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${apiSearchString}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log("below is forcast data");
-    console.log(data)
+    console.log(data);
 
     // Today
-    currentMaxMinTemperature.innerText = getMaxMinTemp(data, 0, 8);
     todayWeatherIcon.src = getForcastWeatherIcon(data, 0, 8);
     todayMaxMinTemperature.innerText = getMaxMinTemp(data, 0, 8);
 
     // Day 2
     day2.innerText = dayOfTheWeek[(today.getDay() + 1) % 7];
-    day2WeatherIcon.src = getForcastWeatherIcon(data, 8, 16);
-    day2MaxMinTemperature.innerText = getMaxMinTemp(data, 8, 16); 
+    day2WeatherIcon.src = getForcastWeatherIcon(data, 0, 8);
+    day2MaxMinTemperature.innerText = getMaxMinTemp(data, 0, 8); 
     
     // Day 3
     day3.innerText = dayOfTheWeek[(today.getDay() + 2) % 7];
-    day3WeatherIcon.src = getForcastWeatherIcon(data, 16, 24);
-    day3MaxMinTemperature.innerText = getMaxMinTemp(data, 16, 24)
+    day3WeatherIcon.src = getForcastWeatherIcon(data, 8, 16);
+    day3MaxMinTemperature.innerText = getMaxMinTemp(data, 8, 16)
     
     // Day 4
     day4.innerText = dayOfTheWeek[(today.getDay() + 3) % 7];
-    day4WeatherIcon.src = getForcastWeatherIcon(data, 24, 32);
-    day4MaxMinTemperature.innerText = getMaxMinTemp(data, 24, 32)
+    day4WeatherIcon.src = getForcastWeatherIcon(data, 16, 24);
+    day4MaxMinTemperature.innerText = getMaxMinTemp(data, 16, 24)
     
     // Day 5
     day5.innerText = dayOfTheWeek[(today.getDay() + 4) % 7];
-    day5WeatherIcon.src = getForcastWeatherIcon(data, 32, 40);
-    day5MaxMinTemperature.innerText = getMaxMinTemp(data, 32, 40)
+    day5WeatherIcon.src = getForcastWeatherIcon(data, 24, 32);
+    day5MaxMinTemperature.innerText = getMaxMinTemp(data, 24, 32)
 
     // getMinTemp(`This is the 5 day forecast: ${data}`);
     // getMaxTemp(data);
