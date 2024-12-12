@@ -35,9 +35,10 @@ let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
 let testBtn = document.getElementById("testBtn");
 
+// Variables Section
 let apiSearchString = "";
-
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
+let apiSearchStringArray = [];
 const today = new Date();
 
 console.log(today.toLocaleDateString());
@@ -51,7 +52,6 @@ function nightModePastSunset(data) {
         document.body.style.backgroundImage = "url(../assets/images/weatherbackground.jpg)"
     }
 }
-
 
 function getMaxMinTemp(data, startIndex, endIndex) {
     let maxTemp = -150;
@@ -87,11 +87,44 @@ function getForcastWeatherIcon(data, startIndex, endIndex) {
     return `https://openweathermap.org/img/wn/${topOfIconHierarchy}@2x.png`
 }
 
+function saveToLocalStorage(cityName) {
+    console.log(`Saving this string to local storage ${cityName}`);
+    let favoritesList = getFromLocalStorage();
+
+    if(!favoritesList.includes(cityName)){
+        favoritesList.push(cityName);
+    }
+    
+    localStorage.setItem('Starred', JSON.stringify(favoritesList));
+}
+
+function getFromLocalStorage() {
+    let localStorageData = localStorage.getItem('Starred');
+
+    if(localStorageData == null) {
+        return [];
+    }
+
+    return JSON.parse(localStorageData);
+}
+
+function removeFromLocalStorage(cityName) {
+    let localStorageData = getFromLocalStorage();
+
+    let starredCitiesIndex = localStorageData.indexOf(cityName);
+
+    localStorageData.splice(starredCitiesIndex, 1);
+
+    localStorage.setItem('Starred', JSON.stringify(localStorageData))
+}
+
 addFavoriteIcon.addEventListener("click", () => {
     console.log(addFavoriteIcon.src.includes("favoriteIcon.svg"));
     // addFavoriteIcon.
     if(addFavoriteIcon.src.includes("favoriteIcon.svg")) {
         addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg"
+        saveToLocalStorage(city.innerText)
+
     } else {
         addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
     }
@@ -101,20 +134,56 @@ addFavoriteIcon.addEventListener("click", () => {
 
 searchBar.addEventListener("keydown", function(event) {
     if(event.key === 'Enter') {
-        let tempString = "";
         let locationInput = searchBar.value.toLowerCase().trim();
-        for(let i = 0; i < locationInput.length; i++) {
-            if(locationInput.charAt(i) == " "){
-                tempString += "+";
-            } else if (locationInput.charAt(i) == ",") {
-                apiSearchString += `${tempString},`
-                tempString = "";
-                i++;
+    //     for(let i = 0; i < locationInput.length; i++) {
+    //         if(locationInput.charAt(i) == " "){
+    //             tempString += "+";
+    //         } else if (locationInput.charAt(i) == ",") {
+    //             apiSearchString += `${tempString},`
+    //             tempString = "";
+    //             i++;
+    //         } else {
+    //             tempString += locationInput.charAt(i);
+    //         }
+    //     }
+    //     apiSearchString += tempString;
+    //     apiSearchStringArray.push(apiSearchString);
+    //     apiSearchString = "";
+    //     console.log(apiSearchString);
+    //     console.log(apiSearchStringArray);
+
+                        
+                        
+        let handle = locationInput.split(',');
+        let tempArr = [];
+        let tempString = "";
+        for(let j = 0; j < handle[0].length; j++) {
+            console.log(handle[0].charAt(j));
+            if(handle[0].charAt(j) == ' ') {
+                tempString += '+';
             } else {
-                tempString += locationInput.charAt(i);
+                tempString += handle[0].charAt(j);
             }
         }
-        apiSearchString += tempString;
+        tempArr.push(tempString);
+        tempString = "";
+        for(let i = 1; i < handle.length; i++) {
+            console.log(handle[i]);
+            console.log(handle[i].length);
+            for(let k = 0; k < handle[i].length; k++) {
+                console.log(handle[i].charAt(k));
+                if(handle[i].charAt(k) == ' ') {
+                    tempString += '';
+                } else {
+                    tempString += handle[i].charAt(k);
+                }
+            }
+            tempArr.push(tempString);
+            tempString = "";
+            // console.log(tempString);
+        }
+        console.log(tempArr.join(","));
+        apiSearchString = tempArr.join(",");
         console.log(apiSearchString);
     }
 });
@@ -137,6 +206,7 @@ searchIcon.addEventListener("click", () => {
     console.log(`This console log was done via the search icon: ${apiSearchString}`);
 });
 
+// rename apiSearchString
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
@@ -145,7 +215,7 @@ async function getWeatherData(apiSearchString) {
     console.log(data);
     
     nightModePastSunset(data);
-    currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+    currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     // console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
     
     currentTemperature.innerText = `${Math.round(data.main.temp)}°`;
@@ -157,11 +227,11 @@ async function getWeatherData(apiSearchString) {
     
     currentWeatherDescription.innerText = data.weather[0].description;
     console.log(data.weather[0].description);  
-
+    
     currentMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
-
-    todayWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
-    todayMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°`;
+    
+    todayWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    todayMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
 }
 
 async function getFiveDayForecast(apiSearchString) {
@@ -169,10 +239,6 @@ async function getFiveDayForecast(apiSearchString) {
     const data = await response.json();
     console.log("below is forcast data");
     console.log(data);
-
-    // Today
-    todayWeatherIcon.src = getForcastWeatherIcon(data, 0, 8);
-    todayMaxMinTemperature.innerText = getMaxMinTemp(data, 0, 8);
 
     // Day 2
     day2.innerText = dayOfTheWeek[(today.getDay() + 1) % 7];
