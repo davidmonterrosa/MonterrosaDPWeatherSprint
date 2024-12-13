@@ -16,12 +16,14 @@
         </div>
         <div>
             <button id="favoritesMenuBtn" class="header-area-text favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList"> Favorites</button>
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="favoritesList" aria-labelledby="offcanvasExampleLabel">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <div class="offcanvas offcanvas-start width-350" data-bs-backdrop="static" tabindex="-1" id="favoritesList" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header d-flex justify-content-between bg-solid-gray pb-0">
+                  <p class="offcanvas-title favoritesList-title" id="offcanvasExampleLabel">Favorites</p>
+                  <button type="button" class="closeBtn-style" data-bs-dismiss="offcanvas" aria-label="Close">
+                    <img src="./assets/images/closeIcon.svg" alt="closeIcon">
+                  </button>
                 </div>
-                <div class="offcanvas-body">
+                <div class="offcanvas-body bg-solid-gray p-0">
                   <div>
                     Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
                   </div>

@@ -119,46 +119,23 @@ function removeFromLocalStorage(cityName) {
 }
 
 addFavoriteIcon.addEventListener("click", () => {
-    console.log(addFavoriteIcon.src.includes("favoriteIcon.svg"));
     // addFavoriteIcon.
-    if(addFavoriteIcon.src.includes("favoriteIcon.svg")) {
+    if(addFavoriteIcon.src.includes("favoriteIcon.svg") && (apiSearchString != "")) {
         addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg"
-        saveToLocalStorage(city.innerText)
-
+        saveToLocalStorage(apiSearchString);
     } else {
         addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
+        removeFromLocalStorage(apiSearchString);
     }
-    console.log(`${city.innerText}`);
-    // saveToLocalStorage(`${city.innerText}`)
 });
 
 searchBar.addEventListener("keydown", function(event) {
     if(event.key === 'Enter') {
-        let locationInput = searchBar.value.toLowerCase().trim();
-    //     for(let i = 0; i < locationInput.length; i++) {
-    //         if(locationInput.charAt(i) == " "){
-    //             tempString += "+";
-    //         } else if (locationInput.charAt(i) == ",") {
-    //             apiSearchString += `${tempString},`
-    //             tempString = "";
-    //             i++;
-    //         } else {
-    //             tempString += locationInput.charAt(i);
-    //         }
-    //     }
-    //     apiSearchString += tempString;
-    //     apiSearchStringArray.push(apiSearchString);
-    //     apiSearchString = "";
-    //     console.log(apiSearchString);
-    //     console.log(apiSearchStringArray);
-
-                        
-                        
+        let locationInput = searchBar.value.toLowerCase().trim();              
         let handle = locationInput.split(',');
         let tempArr = [];
         let tempString = "";
         for(let j = 0; j < handle[0].length; j++) {
-            console.log(handle[0].charAt(j));
             if(handle[0].charAt(j) == ' ') {
                 tempString += '+';
             } else {
@@ -168,10 +145,7 @@ searchBar.addEventListener("keydown", function(event) {
         tempArr.push(tempString);
         tempString = "";
         for(let i = 1; i < handle.length; i++) {
-            console.log(handle[i]);
-            console.log(handle[i].length);
             for(let k = 0; k < handle[i].length; k++) {
-                console.log(handle[i].charAt(k));
                 if(handle[i].charAt(k) == ' ') {
                     tempString += '';
                 } else {
@@ -180,9 +154,7 @@ searchBar.addEventListener("keydown", function(event) {
             }
             tempArr.push(tempString);
             tempString = "";
-            // console.log(tempString);
         }
-        console.log(tempArr.join(","));
         apiSearchString = tempArr.join(",");
         console.log(apiSearchString);
     }
@@ -206,7 +178,15 @@ searchIcon.addEventListener("click", () => {
     console.log(`This console log was done via the search icon: ${apiSearchString}`);
 });
 
-// rename apiSearchString
+favoritesMenuBtn.addEventListener("click", () => {
+    createFavoritesListCards();
+});
+
+function createFavoritesListCards() {
+
+}
+removeFromLocalStorage(apiSearchString);
+
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
