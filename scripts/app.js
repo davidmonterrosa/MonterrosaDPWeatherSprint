@@ -242,26 +242,40 @@ searchBar.addEventListener("keydown", function (event) {
         }
         apiSearchString = tempArr.join(",");
         console.log(apiSearchString);
-        // getFiveDayForecast(apiSearchString);
-        // getWeatherData(apiSearchString);
+        getFiveDayForecast(apiSearchString);
+        getWeatherData(apiSearchString);
     }
 });
 
 searchIcon.addEventListener("click", () => {
-    let tempString = "";
     let locationInput = searchBar.value.toLowerCase().trim();
-    for (let i = 0; i < locationInput.length; i++) {
-        if (locationInput.charAt(i) == " ") {
-            tempString += "+";
-        } else if (locationInput.charAt(i) == ",") {
-            apiSearchString += `${tempString},`
-            tempString = "";
-            i++;
+    let handle = locationInput.split(',');
+    let tempArr = [];
+    let tempString = "";
+    for (let j = 0; j < handle[0].length; j++) {
+        if (handle[0].charAt(j) == ' ') {
+            tempString += '+';
         } else {
-            tempString += locationInput.charAt(i);
+            tempString += handle[0].charAt(j);
         }
     }
-    apiSearchString += tempString;
+    tempArr.push(tempString);
+    tempString = "";
+    for (let i = 1; i < handle.length; i++) {
+        for (let k = 0; k < handle[i].length; k++) {
+            if (handle[i].charAt(k) == ' ') {
+                tempString += '';
+            } else {
+                tempString += handle[i].charAt(k);
+            }
+        }
+        tempArr.push(tempString);
+        tempString = "";
+    }
+    apiSearchString = tempArr.join(",");
+    console.log(apiSearchString);
+    getFiveDayForecast(apiSearchString);
+    getWeatherData(apiSearchString);
     console.log(`This console log was done via the search icon: ${apiSearchString}`);
 });
 
@@ -272,24 +286,18 @@ favoritesMenuBtn.addEventListener("click", () => {
 // Api Calls
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.3387}&lon=${-121.8853}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log(data);
 
     nightModePastSunset(data);
     currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-    // console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
 
     currentTemperature.innerText = `${Math.round(data.main.temp)}°`;
-    console.log(data.main.temp);
 
     city.innerText = data.name;
-    console.log(today.toLocaleDateString());
     date.innerText = today.toLocaleDateString();
 
     currentWeatherDescription.innerText = data.weather[0].description;
-    console.log(data.weather[0].description);
 
     currentMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
 
@@ -343,7 +351,7 @@ async function getFiveDayForecast(apiSearchString) {
 //     return data;
 // }
 
-testBtn.addEventListener("click", () => {
-    getFiveDayForecast(apiSearchString);
-    getWeatherData(apiSearchString);
-});
+// testBtn.addEventListener("click", () => {
+//     getFiveDayForecast(apiSearchString);
+//     getWeatherData(apiSearchString);
+// });

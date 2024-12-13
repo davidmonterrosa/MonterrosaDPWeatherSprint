@@ -10,11 +10,11 @@
 <body>
 
     <header class="header-grid">
-        <div class="d-flex justify-content-center bg-solid-gray">
+        <div class="d-flex justify-content-center bg-solid-gray searchArea">
             <input id="searchBar" class="header-area-text bg-solid-gray border border-0" type="text" placeholder="Location">
             <img id="searchIcon" src="./assets/images/magnifyingGlass.svg" alt="Magnifying glass icon">
         </div>
-        <div>
+        <div class="favoriteBtnArea">
             <button id="favoritesMenuBtn" class="header-area-text favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList-Offcanvas"> Favorites</button>
             <div class="offcanvas offcanvas-start width-350" data-bs-backdrop="static" tabindex="-1" id="favoritesList-Offcanvas" aria-labelledby="offcanvasExampleLabel">
                 <div class="offcanvas-header d-flex justify-content-between bg-solid-gray pb-0">
@@ -36,7 +36,7 @@
                 </div>
               </div>
         </div>
-        <button id="testBtn"> Test API Calls Button</button>
+        <!-- <button id="testBtn"> Test API Calls Button</button> -->
     </header>
 
     <main class="main-grid-layout">
