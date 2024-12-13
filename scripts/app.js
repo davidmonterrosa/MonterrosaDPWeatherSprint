@@ -1,7 +1,6 @@
 import { APIKEY } from "./environment.js";
 
 // Ids Section
-let nightModeToggle = document.getElementById("nightModeToggle");
 let searchBar = document.getElementById("searchBar");
 let searchIcon = document.getElementById("searchIcon");
 let favoritesMenuBtn = document.getElementById("favoritesMenuBtn");
@@ -39,47 +38,61 @@ let testBtn = document.getElementById("testBtn");
 // Variables Section
 let apiSearchString = "";
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
-let apiSearchStringArray = [];
+let localStorageElementsCount = 0;
+let favoriteCityCardsCount = 0;
 const today = new Date();
 
+// Functions
 function nightModePastSunset(data) {
     console.log(data.dt)
     console.log(data.sys.sunset);
-    if(data.dt > data.sys.sunset) {
+    if (data.dt > data.sys.sunset) {
         document.body.style.backgroundImage = "url(../assets/images/nightbackgrond.jpg)";
     } else {
         document.body.style.backgroundImage = "url(../assets/images/weatherbackground.jpg)"
     }
 }
 
-function getMaxMinTemp(data, startIndex, endIndex) {
+function getforecastStartIndex(data) {
+    for (let i = 0; i < data.list.length; i++) {
+        if (data.list[i].dt_txt.includes("00:00:00")) {
+            return i;
+        }
+    }
+}
+
+function getMaxMinTemp(data, startIndex) {
+    let endIndex = startIndex + 8;
     let maxTemp = -150;
     let minTemp = 150;
-    for(let i = startIndex; i < endIndex; i++) {
-        if(data.list[i].main.temp_max > maxTemp) {
+    for (let i = startIndex; i < endIndex; i++) {
+        if (data.list[i].main.temp_max > maxTemp) {
             maxTemp = Math.round(data.list[i].main.temp_max);
         }
 
-        if(data.list[i].main.temp_min < minTemp) {
+        if (data.list[i].main.temp_min < minTemp) {
             minTemp = Math.round(data.list[i].main.temp_min);
         }
     }
     return `${maxTemp}° / ${minTemp}°`;
 }
 
-function getForcastWeatherIcon(data, startIndex, endIndex) {
+function getForcastWeatherIcon(data, startIndex) {
+    let endIndex = startIndex + 8;
+    console.log(startIndex);
+    console.log(endIndex);
     let topOfIconHierarchy = "00d";
     let iconArray = [];
-    for(let i = startIndex; i < endIndex; i++) {
-        if(data.list[i].weather[0].icon == "50d" || data.list[i].weather[0].icon == "50n") {
+    for (let i = startIndex; i < endIndex; i++) {
+        if (data.list[i].weather[0].icon == "50d" || data.list[i].weather[0].icon == "50n") {
             iconArray.push("05d");
         } else {
             iconArray.push(data.list[i].weather[0].icon);
         }
     }
     console.log(iconArray.toString());
-    for(let j = 0; j < iconArray.length; j++) {
-        if(topOfIconHierarchy.localeCompare(iconArray[j]) == -1) {
+    for (let j = 0; j < iconArray.length; j++) {
+        if (topOfIconHierarchy.localeCompare(iconArray[j]) == -1) {
             topOfIconHierarchy = iconArray[j];
         }
     }
@@ -90,17 +103,17 @@ function saveToLocalStorage(cityName) {
     console.log(`Saving this string to local storage ${cityName}`);
     let favoritesListArr = getFromLocalStorage();
 
-    if(!favoritesListArr.includes(cityName)){
+    if (!favoritesListArr.includes(cityName)) {
         favoritesListArr.push(cityName);
     }
-    
+
     localStorage.setItem('Starred', JSON.stringify(favoritesListArr));
 }
 
 function getFromLocalStorage() {
     let localStorageData = localStorage.getItem('Starred');
 
-    if(localStorageData == null) {
+    if (localStorageData == null) {
         return [];
     }
 
@@ -117,24 +130,98 @@ function removeFromLocalStorage(cityName) {
     localStorage.setItem('Starred', JSON.stringify(localStorageData))
 }
 
+function searchStringToCityName(cityString) {
+    let tempNameArr = cityString.split(",");
+    let tempCityNameArr = tempNameArr[0].split('+')
+    let cityNameArr = [];
+    for (let i = 0; i < tempCityNameArr.length; i++) {
+        let formattedCityName = "";
+        formattedCityName += tempCityNameArr[i].charAt(0).toUpperCase();
+        formattedCityName += tempCityNameArr[i].slice(1);
+        cityNameArr.push(formattedCityName);
+    }
+    let finalCityName = cityNameArr.join(" ");
+    console.log(finalCityName);
+    return finalCityName;
+}
+
+function createFavoritesListCards() {
+    let favoritesList = getFromLocalStorage();
+    console.log(favoritesList);
+    offcanvasCardArea.innerHTML = "";
+    favoritesList.map((starredCity) => {
+        // cardDiv.remove();
+        // favoriteCityCardsCount++;
+        console.log(favoriteCityCardsCount)
+        console.log(localStorageElementsCount);
+        if(favoriteCityCardsCount <= localStorageElementsCount) {
+            console.log(`${starredCity}`)
+            
+            let cardDiv = document.createElement('div');
+            cardDiv.className = "favoritesListCard";
+            
+            let cityNameDiv = document.createElement('div');
+            
+            let cityNameP = document.createElement('p');
+            cityNameP.className = "favoriteCityText";
+            cityNameP.innerText = searchStringToCityName(starredCity);
+            cityNameDiv.addEventListener('click', () => {
+                getWeatherData(starredCity);
+                getFiveDayForecast(starredCity);
+            });
+            
+            let filledFavoriteStar = document.createElement('img');
+            filledFavoriteStar.src = "./assets/images/favoriteIconFilled.svg";
+            filledFavoriteStar.alt = "Favorite Icon";
+            filledFavoriteStar.className = "favoriteIcon-Style";
+            
+            filledFavoriteStar.addEventListener('click', function () {
+                // localStorageElementsCount--;
+                // favoriteCityCardsCount--;
+                removeFromLocalStorage(starredCity);
+                addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
+                cardDiv.remove();
+            })
+    
+            let weatherDiv = document.createElement('div');
+    
+            let weatherP = document.createElement('p');
+            weatherP.className = "favoriteCityWeatherText";
+            // weatherP.innerText = `${Math.round(starredCityData.main.temp_max)}° / ${Math.round(starredCityData.main.temp_min)}°`
+    
+            offcanvasCardArea.appendChild(cardDiv);
+    
+            cardDiv.appendChild(cityNameDiv);
+            cardDiv.appendChild(filledFavoriteStar);
+            cardDiv.appendChild(weatherDiv);
+    
+            cityNameDiv.appendChild(cityNameP);
+            weatherDiv.appendChild(weatherP);
+        }
+    })
+}
+
+// Event Listeners
 addFavoriteIcon.addEventListener("click", () => {
-    if(addFavoriteIcon.src.includes("favoriteIcon.svg") && (apiSearchString != "")) {
+    
+    if (addFavoriteIcon.src.includes("favoriteIcon.svg") && (apiSearchString != "")) {
         addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg"
         saveToLocalStorage(apiSearchString);
     } else {
         addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
         removeFromLocalStorage(apiSearchString);
+        localStorageElementsCount--;
     }
 });
 
-searchBar.addEventListener("keydown", function(event) {
-    if(event.key === 'Enter') {
-        let locationInput = searchBar.value.toLowerCase().trim();              
+searchBar.addEventListener("keydown", function (event) {
+    if (event.key === 'Enter') {
+        let locationInput = searchBar.value.toLowerCase().trim();
         let handle = locationInput.split(',');
         let tempArr = [];
         let tempString = "";
-        for(let j = 0; j < handle[0].length; j++) {
-            if(handle[0].charAt(j) == ' ') {
+        for (let j = 0; j < handle[0].length; j++) {
+            if (handle[0].charAt(j) == ' ') {
                 tempString += '+';
             } else {
                 tempString += handle[0].charAt(j);
@@ -142,9 +229,9 @@ searchBar.addEventListener("keydown", function(event) {
         }
         tempArr.push(tempString);
         tempString = "";
-        for(let i = 1; i < handle.length; i++) {
-            for(let k = 0; k < handle[i].length; k++) {
-                if(handle[i].charAt(k) == ' ') {
+        for (let i = 1; i < handle.length; i++) {
+            for (let k = 0; k < handle[i].length; k++) {
+                if (handle[i].charAt(k) == ' ') {
                     tempString += '';
                 } else {
                     tempString += handle[i].charAt(k);
@@ -155,14 +242,16 @@ searchBar.addEventListener("keydown", function(event) {
         }
         apiSearchString = tempArr.join(",");
         console.log(apiSearchString);
+        // getFiveDayForecast(apiSearchString);
+        // getWeatherData(apiSearchString);
     }
 });
 
 searchIcon.addEventListener("click", () => {
     let tempString = "";
     let locationInput = searchBar.value.toLowerCase().trim();
-    for(let i = 0; i < locationInput.length; i++) {
-        if(locationInput.charAt(i) == " "){
+    for (let i = 0; i < locationInput.length; i++) {
+        if (locationInput.charAt(i) == " ") {
             tempString += "+";
         } else if (locationInput.charAt(i) == ",") {
             apiSearchString += `${tempString},`
@@ -180,75 +269,37 @@ favoritesMenuBtn.addEventListener("click", () => {
     createFavoritesListCards();
 });
 
-function createFavoritesListCards() {
-    let favoritesList = getFromLocalStorage();
-    console.log(favoritesList);
-    favoritesList.map( (starredCities) => {
-        console.log(`${starredCities}`)
-
-        let cardDiv = document.createElement('div');
-        cardDiv.className = "favoritesListCard";
-
-        let cityNameDiv = document.createElement('div');
-        
-        let cityNameP = document.createElement('p');
-        cityNameP.className = "favoriteCityText";
-
-        let filledFavoriteStar = document.createElement('img');
-        filledFavoriteStar.src = "./assets/images/favoriteIconFilled.svg";
-        filledFavoriteStar.alt = "Favorite Icon";
-        filledFavoriteStar.className = "favoriteIcon-Style";
-
-        filledFavoriteStar.addEventListener('click', function(){
-            removeFromLocalStorage(starredCities);
-            cardDiv.remove();
-        })
-
-        let weatherDiv = document.createElement('div');
-
-        let weatherP = document.createElement('p');
-        weatherP.className = "favoriteCityWeatherText";
-
-        offcanvasCardArea.appendChild(cardDiv);
-
-        cardDiv.appendChild(cityNameDiv);
-        cardDiv.appendChild(weatherDiv);
-
-        cityNameDiv.appendChild(cityNameP);
-        weatherDiv.appendChild(weatherP);
-    })
-}
-
+// Api Calls
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=${APIKEY}&units=imperial`)
     // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${37.3387}&lon=${-121.8853}&appid=${APIKEY}&units=imperial`);
     const data = await response.json();
     console.log(data);
-    
+
     nightModePastSunset(data);
     currentWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     // console.log(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
-    
+
     currentTemperature.innerText = `${Math.round(data.main.temp)}°`;
     console.log(data.main.temp);
-    
+
     city.innerText = data.name;
     console.log(today.toLocaleDateString());
     date.innerText = today.toLocaleDateString();
-    
+
     currentWeatherDescription.innerText = data.weather[0].description;
-    console.log(data.weather[0].description);  
-    
+    console.log(data.weather[0].description);
+
     currentMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
 
     let favoritesListArr = getFromLocalStorage();
-    if(favoritesListArr.includes(apiSearchString)) {
+    if (favoritesListArr.includes(apiSearchString)) {
         addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg";
     } else {
         addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
     }
-    
+
     todayWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     todayMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
 }
@@ -258,26 +309,27 @@ async function getFiveDayForecast(apiSearchString) {
     const data = await response.json();
     console.log("below is forcast data");
     console.log(data);
+    let startIndex = getforecastStartIndex(data);
 
     // Day 2
     day2.innerText = dayOfTheWeek[(today.getDay() + 1) % 7];
-    day2WeatherIcon.src = getForcastWeatherIcon(data, 0, 8);
-    day2MaxMinTemperature.innerText = getMaxMinTemp(data, 0, 8); 
-    
+    day2WeatherIcon.src = getForcastWeatherIcon(data, startIndex);
+    day2MaxMinTemperature.innerText = getMaxMinTemp(data, startIndex);
+
     // Day 3
     day3.innerText = dayOfTheWeek[(today.getDay() + 2) % 7];
-    day3WeatherIcon.src = getForcastWeatherIcon(data, 8, 16);
-    day3MaxMinTemperature.innerText = getMaxMinTemp(data, 8, 16)
-    
+    day3WeatherIcon.src = getForcastWeatherIcon(data, startIndex + 8);
+    day3MaxMinTemperature.innerText = getMaxMinTemp(data, startIndex + 8)
+
     // Day 4
     day4.innerText = dayOfTheWeek[(today.getDay() + 3) % 7];
-    day4WeatherIcon.src = getForcastWeatherIcon(data, 16, 24);
-    day4MaxMinTemperature.innerText = getMaxMinTemp(data, 16, 24)
-    
+    day4WeatherIcon.src = getForcastWeatherIcon(data, startIndex + 16);
+    day4MaxMinTemperature.innerText = getMaxMinTemp(data, startIndex + 16)
+
     // Day 5
     day5.innerText = dayOfTheWeek[(today.getDay() + 4) % 7];
-    day5WeatherIcon.src = getForcastWeatherIcon(data, 24, 32);
-    day5MaxMinTemperature.innerText = getMaxMinTemp(data, 24, 32)
+    day5WeatherIcon.src = getForcastWeatherIcon(data, startIndex + 24);
+    day5MaxMinTemperature.innerText = getMaxMinTemp(data, startIndex + 24)
 
     // getMinTemp(`This is the 5 day forecast: ${data}`);
     // getMaxTemp(data);
@@ -285,11 +337,11 @@ async function getFiveDayForecast(apiSearchString) {
 
 }
 
-async function favoritesCardApiPull(cityName) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKEY}&units=imperial`);
-    const data = await response.json();
-
-}
+// async function favoritesCardApiPull(cityName) {
+//     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKEY}&units=imperial`);
+//     const data = await response.json();
+//     return data;
+// }
 
 testBtn.addEventListener("click", () => {
     getFiveDayForecast(apiSearchString);
