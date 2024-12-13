@@ -15,28 +15,24 @@
             <img id="searchIcon" src="./assets/images/magnifyingGlass.svg" alt="Magnifying glass icon">
         </div>
         <div>
-            <button id="favoritesMenuBtn" class="header-area-text favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList"> Favorites</button>
-            <div class="offcanvas offcanvas-start width-350" data-bs-backdrop="static" tabindex="-1" id="favoritesList" aria-labelledby="offcanvasExampleLabel">
+            <button id="favoritesMenuBtn" class="header-area-text favoritesBtn-style bg-translucent-gray" type="button" data-bs-toggle="offcanvas" data-bs-target="#favoritesList-Offcanvas"> Favorites</button>
+            <div class="offcanvas offcanvas-start width-350" data-bs-backdrop="static" tabindex="-1" id="favoritesList-Offcanvas" aria-labelledby="offcanvasExampleLabel">
                 <div class="offcanvas-header d-flex justify-content-between bg-solid-gray pb-0">
                   <p class="offcanvas-title favoritesList-title" id="offcanvasExampleLabel">Favorites</p>
                   <button type="button" class="closeBtn-style" data-bs-dismiss="offcanvas" aria-label="Close">
                     <img src="./assets/images/closeIcon.svg" alt="closeIcon">
                   </button>
                 </div>
-                <div class="offcanvas-body bg-solid-gray p-0">
-                  <div>
-                    Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-                  </div>
-                  <div class="dropdown mt-3">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                      Dropdown button
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                  </div>
+                <div id="offcanvasCardArea" class="offcanvas-body bg-solid-gray p-0">
+                  <!-- <div class="favoritesListCard">
+                    <div>
+                      <p class="favoriteCityText">Stockton</p>
+                    </div>
+                    <img class="favoriteIcon-Style" src="./assets/images/favoriteIconFilled.svg" alt="Favorite Icon Filled">
+                    <div>
+                      <p class="favoriteCityWeatherText">???° / ???°</p>
+                    </div>
+                  </div> -->
                 </div>
               </div>
         </div>
@@ -48,9 +44,9 @@
             <img id="currentWeatherIcon" src="" alt="Weather icon">
             <h1 id="currentTemperature">??°</h1>
             <div class="weather-display-column">
-                <h2 id="city">City</h2>
-                <p id="date">mm/dd/yy</p>
-                <p id="currentWeatherDescription">Main weather</p>
+                <h2 id="city" class="text-center">City</h2>
+                <p id="date" class="text-center">mm/dd/yy</p>
+                <p id="currentWeatherDescription" class="text-center">Main weather</p>
             </div>
             <h1 id="currentMaxMinTemperature">??° / ??°</h1>
             <img id="addFavoriteIcon" src="./assets/images/favoriteIcon.svg" alt="Favorite icon">

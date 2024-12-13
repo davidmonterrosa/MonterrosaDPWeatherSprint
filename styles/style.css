@@ -16,6 +16,22 @@ body {
     padding: 2.875rem 3.063rem;
 }
 
+h1 {
+    font-size: 6.25rem;
+}
+
+h2 {
+    font-size: 5rem;
+}
+
+h3 {
+    font-size: 4.375rem;
+}
+
+p {
+    font-size: 3.125rem;
+}
+
 .bg-translucent-gray {
     background-color: #D9D9D999;
     border-radius: 25px;
@@ -53,6 +69,39 @@ body {
     font-size: 2.5rem;
 }
 
+.favoritesListCard {
+    margin-top: 42px;
+    height: 140px;
+    width: 350px;
+    display: grid;
+    grid-template-columns: 259px 1fr;
+    background-color: #585858;
+    color: white;
+}
+
+.favoriteCityText {
+    max-width: 259px;
+    max-height: 57px;
+    text-align: center;
+    line-height: 46px;
+    overflow: hidden;
+    margin: 0;
+    padding: 10px 0 0 47px;
+}
+
+.favoriteIcon-Style {
+    padding: 10px 21px 0 25px;
+}
+
+.favoriteCityWeatherText {
+    max-width: 239px;
+    font-size: 2.5rem;
+    text-align: center;
+    line-height: 49.53px;
+    margin: 0;
+    padding: 13px 0 8px 68px;
+}
+
 .closeBtn-style {
     align-self: flex-start;
     padding: 5px;
@@ -75,6 +124,11 @@ body {
     grid-row: 1;
     display: flex;
     align-items: center;
+    /* justify-content: space-evenly; */
+}
+
+#addFavoriteIcon {
+    align-self: flex-start;
 }
 
 .forcast-cards {

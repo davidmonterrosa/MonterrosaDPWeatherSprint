@@ -5,6 +5,7 @@ let nightModeToggle = document.getElementById("nightModeToggle");
 let searchBar = document.getElementById("searchBar");
 let searchIcon = document.getElementById("searchIcon");
 let favoritesMenuBtn = document.getElementById("favoritesMenuBtn");
+let offcanvasCardArea = document.getElementById("offcanvasCardArea");
 
 let currentWeatherIcon = document.getElementById("currentWeatherIcon");
 let currentTemperature = document.getElementById("currentTemperature");
@@ -40,8 +41,6 @@ let apiSearchString = "";
 let dayOfTheWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"]
 let apiSearchStringArray = [];
 const today = new Date();
-
-console.log(today.toLocaleDateString());
 
 function nightModePastSunset(data) {
     console.log(data.dt)
@@ -89,13 +88,13 @@ function getForcastWeatherIcon(data, startIndex, endIndex) {
 
 function saveToLocalStorage(cityName) {
     console.log(`Saving this string to local storage ${cityName}`);
-    let favoritesList = getFromLocalStorage();
+    let favoritesListArr = getFromLocalStorage();
 
-    if(!favoritesList.includes(cityName)){
-        favoritesList.push(cityName);
+    if(!favoritesListArr.includes(cityName)){
+        favoritesListArr.push(cityName);
     }
     
-    localStorage.setItem('Starred', JSON.stringify(favoritesList));
+    localStorage.setItem('Starred', JSON.stringify(favoritesListArr));
 }
 
 function getFromLocalStorage() {
@@ -119,7 +118,6 @@ function removeFromLocalStorage(cityName) {
 }
 
 addFavoriteIcon.addEventListener("click", () => {
-    // addFavoriteIcon.
     if(addFavoriteIcon.src.includes("favoriteIcon.svg") && (apiSearchString != "")) {
         addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg"
         saveToLocalStorage(apiSearchString);
@@ -183,9 +181,43 @@ favoritesMenuBtn.addEventListener("click", () => {
 });
 
 function createFavoritesListCards() {
+    let favoritesList = getFromLocalStorage();
+    console.log(favoritesList);
+    favoritesList.map( (starredCities) => {
+        console.log(`${starredCities}`)
 
+        let cardDiv = document.createElement('div');
+        cardDiv.className = "favoritesListCard";
+
+        let cityNameDiv = document.createElement('div');
+        
+        let cityNameP = document.createElement('p');
+        cityNameP.className = "favoriteCityText";
+
+        let filledFavoriteStar = document.createElement('img');
+        filledFavoriteStar.src = "./assets/images/favoriteIconFilled.svg";
+        filledFavoriteStar.alt = "Favorite Icon";
+        filledFavoriteStar.className = "favoriteIcon-Style";
+
+        filledFavoriteStar.addEventListener('click', function(){
+            removeFromLocalStorage(starredCities);
+            cardDiv.remove();
+        })
+
+        let weatherDiv = document.createElement('div');
+
+        let weatherP = document.createElement('p');
+        weatherP.className = "favoriteCityWeatherText";
+
+        offcanvasCardArea.appendChild(cardDiv);
+
+        cardDiv.appendChild(cityNameDiv);
+        cardDiv.appendChild(weatherDiv);
+
+        cityNameDiv.appendChild(cityNameP);
+        weatherDiv.appendChild(weatherP);
+    })
 }
-removeFromLocalStorage(apiSearchString);
 
 async function getWeatherData(apiSearchString) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${apiSearchString}&appid=${APIKEY}&units=imperial`)
@@ -209,6 +241,13 @@ async function getWeatherData(apiSearchString) {
     console.log(data.weather[0].description);  
     
     currentMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
+
+    let favoritesListArr = getFromLocalStorage();
+    if(favoritesListArr.includes(apiSearchString)) {
+        addFavoriteIcon.src = "./assets/images/favoriteIconFilled.svg";
+    } else {
+        addFavoriteIcon.src = "./assets/images/favoriteIcon.svg";
+    }
     
     todayWeatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     todayMaxMinTemperature.innerText = `${Math.round(data.main.temp_max)}° / ${Math.round(data.main.temp_min)}°`;
@@ -243,6 +282,12 @@ async function getFiveDayForecast(apiSearchString) {
     // getMinTemp(`This is the 5 day forecast: ${data}`);
     // getMaxTemp(data);
     // currentMaxMinTemperature.innerText = `${data.main.temp_max}° / ${data.main.temp_min}°` 
+
+}
+
+async function favoritesCardApiPull(cityName) {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKEY}&units=imperial`);
+    const data = await response.json();
 
 }
 
