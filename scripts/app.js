@@ -33,7 +33,7 @@ let day5 = document.getElementById("day5");
 let day5WeatherIcon = document.getElementById("day5WeatherIcon");
 let day5MaxMinTemperature = document.getElementById("day5MaxMinTemperature");
 
-let testBtn = document.getElementById("testBtn");
+// let testBtn = document.getElementById("testBtn");
 
 // Variables Section
 let apiSearchString = "";
@@ -345,13 +345,8 @@ async function getFiveDayForecast(apiSearchString) {
 
 }
 
-// async function favoritesCardApiPull(cityName) {
-//     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKEY}&units=imperial`);
-//     const data = await response.json();
-//     return data;
-// }
-
-// testBtn.addEventListener("click", () => {
-//     getFiveDayForecast(apiSearchString);
-//     getWeatherData(apiSearchString);
-// });
+async function startUp(cityName) {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKEY}&units=imperial`);
+    const data = await response.json();
+    return data;
+}
